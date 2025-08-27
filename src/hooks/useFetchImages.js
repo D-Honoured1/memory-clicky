@@ -6,7 +6,7 @@ export default function useFetchImages(query = "nature") {
     async function fetchImages() {
       try {
         const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=${import.meta.env.EDLeG7gpjcu42WYXIpcNbqvVtOUnivwnfc_Ujf5Aw4w}`
+          `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=${import.meta.env.VITE_UNSPLASH_KEY=EDLeG7gpjcu42WYXIpcNbqvVtOUnivwnfc_Ujf5Aw4w}`
         );
 
         const data = await response.json();
