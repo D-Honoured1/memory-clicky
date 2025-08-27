@@ -7,16 +7,20 @@ import React from "react";
  *  - item: { id, name, image }
  *  - onClick: function to call when activated
  */
-function Card({ url, alt, onClick }) {
+export default function Card({ item, onClick }) {
   return (
     <div
-      onClick={onClick}
+      onClick={() => onClick(item)}
       className="bg-white rounded-xl shadow p-2 cursor-pointer hover:scale-105 transition"
     >
-      <img src={url} alt={alt} className="w-full h-40 object-cover rounded-md" />
+    <img
+      src={item.urls.small}
+      alt={item.alt_description || "Unsplash image"}
+      loading="lazy"
+    />
+
     </div>
   );
 }
 
-export default Card;
 

@@ -1,29 +1,29 @@
-import { useState, useEffect } from "react";
-
-export default function useFetchImages(query = "nature") {
+export default function useFetchImages(query = "nature", perPage = 12) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchImages() {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch(
-          `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=${
+        const res = await fetch(
+          `https://api.unsplash.com/search/photos?query=${query}&per_page=${perPage}&client_id=${
             import.meta.env.VITE_UNSPLASH_ACCESS_KEY
           }`
         );
-
-        const data = await response.json();
+        if (!res.ok) throw new Error("Failed to fetch images");
+        const data = await res.json();
         setImages(data.results || []);
-      } catch (error) {
-        console.error("Error fetching images:", error);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     }
-
     fetchImages();
-  }, [query]);
+  }, [query, perPage]);
 
-  return { images, loading };
+  return { images, loading, error };
 }

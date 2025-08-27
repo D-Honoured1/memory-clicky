@@ -44,7 +44,7 @@ export default function App() {
   const imagesNeeded = useMemo(() => (stage === 1 ? 6 : stage === 2 ? 12 : 18), [stage]);
 
   // fetch images with hook
-  const { data: images, loading, error } = useFetchImages(imagesNeeded);
+  const { images, loading, error } = useFetchImages("nature",imagesNeeded);
 
   // scoring
   const [currentScore, setCurrentScore] = useState(0);
