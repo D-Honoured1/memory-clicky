@@ -20,8 +20,12 @@ export default function App() {
     return Number.parseInt(localStorage.getItem("bestScore") || "0", 10)
   })
   const [autoShuffle, setAutoShuffle] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(15)
+  const [gameOver, setGameOver] = useState(false)
 
   const cardCounts = { 1: 6, 2: 12, 3: 18 }
+  const stageTimes = { 1: 15, 2: 10, 3: 5 }
+
   const { images, loading, error, refetch } = useFetchImages(cardCounts[stage])
 
   useEffect(() => {
@@ -33,15 +37,38 @@ export default function App() {
     localStorage.setItem("bestScore", bestScore.toString())
   }, [bestScore])
 
+  // Reset timer and clear game over when stage changes
+  useEffect(() => {
+    setTimeLeft(stageTimes[stage])
+    setGameOver(false)
+  }, [stage])
+
+  // Timer countdown
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setGameOver(true)
+      return
+    }
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [timeLeft])
+
   const handleScoreUpdate = (newScore) => {
-    setCurrentScore(newScore)
-    if (newScore > bestScore) {
-      setBestScore(newScore)
+    if (!gameOver) {
+      setCurrentScore(newScore)
+      if (newScore > bestScore) {
+        setBestScore(newScore)
+      }
     }
   }
 
   const handleReset = () => {
     setCurrentScore(0)
+    setTimeLeft(stageTimes[stage])
+    setGameOver(false)
     refetch()
   }
 
@@ -65,22 +92,38 @@ export default function App() {
 
       <Scoreboard currentScore={currentScore} bestScore={bestScore} />
 
-      <StageSelector stage={stage} setStage={setStage} />
+      <div className="timer">⏳ Time Left: {timeLeft}s</div>
 
-      <Controls onReset={handleReset} autoShuffle={autoShuffle} setAutoShuffle={setAutoShuffle} />
-
-      {loading ? (
+      {gameOver ? (
         <div className="app-card center" style={{ padding: "40px" }}>
-          Loading images...
+          <h2>Game Over</h2>
+          <p>Your Score: {currentScore}</p>
+          <button className="btn" onClick={handleReset}>Restart</button>
         </div>
       ) : (
-        <CardGrid
-          images={images}
-          stage={stage}
-          autoShuffle={autoShuffle}
-          onScoreUpdate={handleScoreUpdate}
-          onReset={handleReset}
-        />
+        <>
+          <StageSelector stage={stage} setStage={setStage} />
+
+          <Controls
+            onReset={handleReset}
+            autoShuffle={autoShuffle}
+            setAutoShuffle={setAutoShuffle}
+          />
+
+          {loading ? (
+            <div className="app-card center" style={{ padding: "40px" }}>
+              Loading images...
+            </div>
+          ) : (
+            <CardGrid
+              images={images}
+              stage={stage}
+              autoShuffle={autoShuffle}
+              onScoreUpdate={handleScoreUpdate}
+              onReset={handleReset}
+            />
+          )}
+        </>
       )}
     </div>
   )

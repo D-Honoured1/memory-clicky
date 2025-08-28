@@ -156,7 +156,7 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
     <section aria-label="Card grid">
       <div className="card-grid" data-cards={cardCount}>
         {cards.map((c) => (
-          <Card key={c.id} item={c} onClick={handleCardClick} />
+          <Card key={c.id} image={c} onClick={handleCardClick} />
         ))}
       </div>
     </section>
