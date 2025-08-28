@@ -3,10 +3,16 @@
 @import "./styles/layout.css";
 
 /* Base reset */
-* { box-sizing: border-box; }
-html,body,#root { height: 100%; }
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
 body {
-  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: var(--bg);
   color: var(--text);
   margin: 0;
@@ -23,7 +29,245 @@ body {
 }
 
 /* utility classes */
-.row { display:flex; gap: 12px; align-items:center; }
-.center { display:flex; align-items:center; justify-content:center; }
-.small { font-size: 0.85rem; opacity: 0.9; }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.small {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+}
+
+/* Added menu overlay and content styles */
+/* MENU STYLES */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+
+.menu-content {
+  /* Use theme-aware colors instead of hardcoded values */
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--card-shadow);
+  animation: slideIn 0.3s ease;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  /* Use theme-aware border color */
+  border-bottom: 1px solid var(--border);
+}
+
+.menu-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.current-status {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.status-item:last-child {
+  margin-bottom: 0;
+}
+
+.status-label {
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.status-value {
+  font-size: 0.875rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.menu-section {
+  margin-bottom: 1.5rem;
+}
+
+.menu-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+  max-width: 100%;
+}
+
+.genre-btn,
+.stage-btn {
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-btn {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.stage-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stage-buttons .stage-btn {
+  flex: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* GAME OVER STYLES */
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.game-over-card {
+  /* Use theme-aware colors instead of hardcoded values */
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--card-shadow);
+  animation: popIn 0.4s ease;
+}
+
+.game-over-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.scores {
+  margin: 1rem 0;
+}
+
+.final-score,
+.best-score {
+  font-size: 1.2rem;
+  margin: 0.3rem 0;
+}
+
+.game-over-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+.retry-btn {
+  /* Use theme-aware success color */
+  background: var(--success);
+  color: white;
+}
+
+.stage-btn {
+  /* Use theme-aware primary color */
+  background: var(--btn-primary);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

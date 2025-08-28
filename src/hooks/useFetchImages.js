@@ -5,14 +5,28 @@ import { useState, useEffect } from "react"
 // Base Unsplash API endpoint for random photos
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random"
 
+const GENRE_SEARCH_TERMS = {
+  nature: "nature,landscape,forest,mountain,ocean",
+  animals: "animals,pets,wildlife,cats,dogs",
+  food: "food,cooking,restaurant,cuisine,meal",
+  travel: "travel,city,architecture,landmark,vacation",
+  people: "people,portrait,person,human,face",
+  technology: "technology,computer,gadget,innovation,digital",
+  art: "art,painting,sculpture,creative,design",
+  sports: "sports,fitness,athlete,game,competition",
+  music: "music,instrument,concert,musician,band",
+  business: "business,office,meeting,professional,work",
+}
+
 /**
  * Custom React Hook: useFetchImages
  * Fetches random images from Unsplash API (or fallback placeholders on error).
  *
  * @param {number} count - Number of images to fetch
+ * @param {string} genre - Genre/category for image search
  * @returns {object} { images, loading, error, refetch }
  */
-export default function useFetchImages(count = 6) {
+export default function useFetchImages(count = 6, genre = "nature") {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -30,13 +44,14 @@ export default function useFetchImages(count = 6) {
     setError(null)
 
     try {
+      const searchQuery = GENRE_SEARCH_TERMS[genre] || genre
       const response = await fetch(
-        `${UNSPLASH_API_URL}?count=${count}&w=300&h=300&fit=crop`,
+        `${UNSPLASH_API_URL}?count=${count}&w=300&h=300&fit=crop&query=${encodeURIComponent(searchQuery)}`,
         {
           headers: {
             Authorization: `Client-ID ${apiKey}`, // ✅ Unsplash expects this
           },
-        }
+        },
       )
 
       if (!response.ok) {
@@ -48,8 +63,8 @@ export default function useFetchImages(count = 6) {
       // Normalize image data
       const processedImages = data.map((img, index) => ({
         id: img.id || `fallback-${index}`,
-        url: img.urls?.small || `/placeholder.svg?height=300&width=300&query=nature-${index}`,
-        alt: img.alt_description || `Image ${index + 1}`,
+        url: img.urls?.small || `/placeholder.svg?height=300&width=300&query=${genre}-${index}`,
+        alt: img.alt_description || `${genre} image ${index + 1}`,
       }))
 
       setImages(processedImages)
@@ -57,11 +72,10 @@ export default function useFetchImages(count = 6) {
       console.error("Failed to fetch images:", err)
       setError(err.message)
 
-      // Fallback placeholders if Unsplash API fails
       const fallbackImages = Array.from({ length: count }, (_, index) => ({
         id: `fallback-${index}`,
-        url: `/placeholder.svg?height=300&width=300&query=placeholder-${index}`,
-        alt: `Placeholder image ${index + 1}`,
+        url: `/placeholder.svg?height=300&width=300&query=${genre}-${index}`,
+        alt: `${genre} placeholder ${index + 1}`,
       }))
       setImages(fallbackImages)
     } finally {
@@ -69,10 +83,11 @@ export default function useFetchImages(count = 6) {
     }
   }
 
-  // Fetch images on mount or when `count` changes
   useEffect(() => {
     fetchImages()
-  }, [count])
+  }, [count, genre])
 
   return { images, loading, error, refetch: fetchImages }
 }
+
+export const AVAILABLE_GENRES = Object.keys(GENRE_SEARCH_TERMS)

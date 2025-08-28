@@ -1,6 +1,5 @@
 "use client"
 
-// src/components/CardGrid.jsx
 import { useEffect, useMemo, useRef, useState } from "react"
 import Card from "./Card"
 import { shuffle } from "../utils/shuffle"
@@ -36,9 +35,9 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
 
   // derive cardCount from stage
   const cardCount = useMemo(() => {
-    if (stage === 1) return 6
-    if (stage === 2) return 12
-    return 18
+    if (stage === 1) return 10
+    if (stage === 2) return 20
+    return 30
   }, [stage])
 
   // shuffle when images change (fetch) or when component mounts
