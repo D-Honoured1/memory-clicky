@@ -1,26 +1,35 @@
-// src/components/Card.jsx
-import React from "react";
+"use client"
 
-/**
- * Card component - focusable and keyboard-activatable.
- * Props:
- *  - item: { id, name, image }
- *  - onClick: function to call when activated
- */
-export default function Card({ item, onClick }) {
+import { useState } from "react"
+
+export default function Card({ image, onClick }) {
+  const [imageError, setImageError] = useState(false)
+
+  const handleClick = () => {
+    onClick(image.id)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      handleClick()
+    }
+  }
+
   return (
     <div
-      onClick={() => onClick(item)}
-      className="bg-white rounded-xl shadow p-2 cursor-pointer hover:scale-105 transition"
+      className="card"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`Memory card: ${image.alt}`}
     >
-    <img
-      src={item.urls.small}
-      alt={item.alt_description || "Unsplash image"}
-      loading="lazy"
-    />
-
+      {imageError ? (
+        <div className="card-error">Image failed to load</div>
+      ) : (
+        <img src={image.url || "/placeholder.svg"} alt={image.alt} onError={() => setImageError(true)} loading="lazy" />
+      )}
     </div>
-  );
+  )
 }
-
-

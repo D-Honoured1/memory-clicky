@@ -1,5 +1,4 @@
-// src/components/Controls.jsx
-import React from "react";
+"use client"
 
 /**
  * Controls component for game actions like Reset Round and Toggle AutoShuffle for hard mode.
@@ -7,7 +6,9 @@ import React from "react";
 export default function Controls({ onReset, autoShuffle, setAutoShuffle }) {
   return (
     <div className="controls app-card" role="toolbar" aria-label="Game controls">
-      <button onClick={onReset} className="btn secondary" aria-label="Reset round">Reset Round</button>
+      <button onClick={onReset} className="btn secondary" aria-label="Reset round">
+        Reset Round
+      </button>
       <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <input
           type="checkbox"
@@ -18,5 +19,5 @@ export default function Controls({ onReset, autoShuffle, setAutoShuffle }) {
         <span className="small-muted">Auto-shuffle (Hard)</span>
       </label>
     </div>
-  );
+  )
 }

@@ -1,26 +1,28 @@
-/* src/styles/variables.css - theme variables and CSS variables for theming */
+/* CSS Variables for theming */
 :root {
-  --bg: #f6f7fb;
-  --panel: #ffffff;
-  --text: #0f172a;
-  --muted: #6b7280;
-  --accent: #7c3aed; /* purple-ish */
-  --accent-2: #06b6d4;
-  --card-bg: linear-gradient(180deg, rgba(255,255,255,1), rgba(250,249,255,1));
-  --shadow: 0 6px 20px rgba(12,18,30,0.06);
-  --radius: 12px;
-  --gap: 14px;
-  --glass: rgba(255,255,255,0.6);
+  --bg: #f8fafc;
+  --text: #1e293b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --btn-primary: #3b82f6;
+  --btn-primary-hover: #2563eb;
+  --btn-secondary: #6b7280;
+  --btn-secondary-hover: #4b5563;
+  --accent: #10b981;
+  --muted: #64748b;
 }
 
-/* dark theme override */
 [data-theme="dark"] {
-  --bg: #071626;
-  --panel: #071a2a;
-  --text: #e6eef7;
-  --muted: #a3b4c3;
-  --accent: #7dd3fc;
-  --accent-2: #a78bfa;
-  --card-bg: linear-gradient(180deg, rgba(8,16,24,1), rgba(12,22,32,1));
-  --shadow: 0 6px 20px rgba(0,0,0,0.6);
+  --bg: #0f172a;
+  --text: #f1f5f9;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --btn-primary: #3b82f6;
+  --btn-primary-hover: #2563eb;
+  --btn-secondary: #475569;
+  --btn-secondary-hover: #64748b;
+  --accent: #10b981;
+  --muted: #94a3b8;
 }

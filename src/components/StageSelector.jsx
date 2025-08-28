@@ -1,5 +1,4 @@
-// src/components/StageSelector.jsx
-import React from "react";
+"use client"
 
 /**
  * StageSelector: choose difficulty stage (1,2,3)
@@ -38,5 +37,5 @@ export default function StageSelector({ stage, setStage }) {
         <div>Hard: 18 cards, 5s per-click + optional auto-shuffle</div>
       </div>
     </div>
-  );
+  )
 }

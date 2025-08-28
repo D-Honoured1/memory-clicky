@@ -1,6 +1,3 @@
-// src/components/Scoreboard.jsx
-import React from "react";
-
 /**
  * Scoreboard shows current score, best score and optionally timer.
  * Accessible and lightweight.
@@ -28,5 +25,5 @@ export default function Scoreboard({ currentScore, bestScore, timeLeft }) {
         )}
       </div>
     </div>
-  );
+  )
 }
