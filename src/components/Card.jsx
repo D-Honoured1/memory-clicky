@@ -12,7 +12,7 @@ export default function Card({ image, onClick }) {
 
   // Handles when a user clicks the card
   const handleClick = () => {
-    onClick(image.id)
+    onClick(image)
   }
 
   // Allows triggering with Enter or Space key for accessibility

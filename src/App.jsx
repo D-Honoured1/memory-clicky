@@ -20,9 +20,10 @@ export default function App() {
   const [resetSignal, setResetSignal] = useState(0)
   const [timeLeft, setTimeLeft] = useState(null)
   const [genre, setGenre] = useState(() => localStorage.getItem("selectedGenre") || null)
+  const [gameStarted, setGameStarted] = useState(false)
 
-  const cardCounts = { 1: 10, 2: 20, 3: 30 }
-  const { images, loading, error, refetch } = useFetchImages(cardCounts[stage], genre)
+  const cardCounts = { 1: 5, 2: 10, 3: 15 }
+  const { images, loading, error, refetch } = useFetchImages(cardCounts[stage], genre, gameStarted)
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme)
@@ -45,18 +46,27 @@ export default function App() {
     setCurrentScore(0)
     setGameOver(false)
     refetch()
-  }, [stage, refetch])
+  }, [stage]) // Only depend on stage changes
 
   useEffect(() => {
     setCurrentScore(0)
     setGameOver(false)
     refetch()
-  }, [genre, refetch])
+  }, [genre]) // Only depend on genre changes
 
-  const handleScoreUpdate = (newScore) => {
+  const handleScoreUpdate = (scoreDelta) => {
+    const newScore = currentScore + scoreDelta
     setCurrentScore(newScore)
     if (newScore > bestScore) {
       setBestScore(newScore)
+    }
+
+    const targetScore = cardCounts[stage]
+    if (newScore >= targetScore) {
+      // Player won! End the game successfully
+      setGameOver(true)
+      setTimeLeft(null)
+      setGameStarted(false)
     }
   }
 
@@ -64,6 +74,7 @@ export default function App() {
     setCurrentScore(0)
     setGameOver(false)
     setTimeLeft(null)
+    setGameStarted(false)
     setResetSignal((prev) => prev + 1)
     refetch()
   }
@@ -71,6 +82,19 @@ export default function App() {
   const handleGameOver = () => {
     setGameOver(true)
     setTimeLeft(null)
+    setGameStarted(false)
+  }
+
+  const handleStartStop = () => {
+    if (gameStarted) {
+      handleGameOver()
+    } else {
+      setGameStarted(true)
+      setGameOver(false)
+      setCurrentScore(0)
+      setTimeLeft(null)
+      setResetSignal((prev) => prev + 1)
+    }
   }
 
   if (error && images.length === 0) {
@@ -100,6 +124,15 @@ export default function App() {
       />
       <Scoreboard currentScore={currentScore} bestScore={bestScore} timeLeft={timeLeft} />
       <StageSelector stage={stage} setStage={setStage} />
+      <div className="start-stop-container">
+        <button
+          className={`btn start-stop-btn ${gameStarted ? "stop" : "start"}`}
+          onClick={handleStartStop}
+          disabled={loading}
+        >
+          {gameStarted ? "Stop Game" : "Start Game"}
+        </button>
+      </div>
       {gameOver ? (
         <GameOver currentScore={currentScore} bestScore={bestScore} onRetry={handleReset} />
       ) : loading ? (
@@ -113,6 +146,7 @@ export default function App() {
           resetSignal={resetSignal}
           setTimeLeft={setTimeLeft}
           autoShuffleEnabled={autoShuffle}
+          gameStarted={gameStarted}
         />
       )}
       <Controls onReset={handleReset} autoShuffle={autoShuffle} setAutoShuffle={setAutoShuffle} />

@@ -23,8 +23,18 @@ import { startCountdown } from "../utils/timer"
  *  - resetSignal (number) -> when increments, resets internal round
  *  - setTimeLeft -> function to report remaining time (optional)
  *  - autoShuffleEnabled -> boolean for stage 3 auto shuffle
+ *  - gameStarted -> boolean to control if cards are clickable
  */
-export default function CardGrid({ images, stage, onScore, onLose, resetSignal, setTimeLeft, autoShuffleEnabled }) {
+export default function CardGrid({
+  images,
+  stage,
+  onScore,
+  onLose,
+  resetSignal,
+  setTimeLeft,
+  autoShuffleEnabled,
+  gameStarted,
+}) {
   // clickedSetRef holds ids clicked in the current round; useRef for O(1) checks and no re-renders on mutation
   const clickedSetRef = useRef(new Set())
   // local copy of images (shuffled)
@@ -35,9 +45,9 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
 
   // derive cardCount from stage
   const cardCount = useMemo(() => {
-    if (stage === 1) return 10
-    if (stage === 2) return 20
-    return 30
+    if (stage === 1) return 5
+    if (stage === 2) return 10
+    return 15
   }, [stage])
 
   // shuffle when images change (fetch) or when component mounts
@@ -95,7 +105,7 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
   // auto-shuffle logic for Hard stage
   useEffect(() => {
     // only for stage 3 and if enabled
-    if (stage !== 3 || !autoShuffleEnabled) return
+    if (stage !== 3 || !autoShuffleEnabled || !gameStarted) return
     // clear previous if any
     if (autoShuffleRef.current) {
       clearInterval(autoShuffleRef.current)
@@ -104,14 +114,14 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
     // set auto-shuffle every 6 seconds if user hasn't clicked — we detect by shuffling regardless
     autoShuffleRef.current = setInterval(() => {
       setCards((prev) => shuffle(prev))
-    }, 6000)
+    }, 1500)
     return () => {
       if (autoShuffleRef.current) {
         clearInterval(autoShuffleRef.current)
         autoShuffleRef.current = null
       }
     }
-  }, [stage, autoShuffleEnabled])
+  }, [stage, autoShuffleEnabled, gameStarted])
 
   // Clean up timers on unmount
   useEffect(() => {
@@ -121,8 +131,22 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
     }
   }, [])
 
+  // Clear timer when game stops
+  useEffect(() => {
+    if (!gameStarted) {
+      // Clear timer when game stops
+      if (countdownStopRef.current) {
+        countdownStopRef.current()
+        countdownStopRef.current = null
+      }
+      setTimeLeft && setTimeLeft(null)
+    }
+  }, [gameStarted, setTimeLeft])
+
   // Handler when a card is clicked
   const handleCardClick = (item) => {
+    if (!gameStarted) return
+
     // If already clicked in this round -> lose
     if (clickedSetRef.current.has(item.id)) {
       // reset and report lose
@@ -137,9 +161,22 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
       onLose && onLose()
       return
     }
+
     // unique click: mark and increment
     clickedSetRef.current.add(item.id)
     onScore && onScore(1)
+
+    if (clickedSetRef.current.size === cardCount) {
+      // Player won! Stop timer and don't shuffle
+      if (countdownStopRef.current) {
+        countdownStopRef.current()
+        countdownStopRef.current = null
+      }
+      setTimeLeft && setTimeLeft(null)
+      // Don't call onLose - let the game continue or handle win state in parent
+      return
+    }
+
     // shuffle
     setCards((prev) => shuffle(prev))
     // Restart per-click timer
@@ -153,9 +190,9 @@ export default function CardGrid({ images, stage, onScore, onLose, resetSignal, 
 
   return (
     <section aria-label="Card grid">
-      <div className="card-grid" data-cards={cardCount}>
-        {cards.map((c) => (
-          <Card key={c.id} image={c} onClick={handleCardClick} />
+      <div className={`card-grid ${!gameStarted ? "disabled" : ""}`} data-cards={cardCount}>
+        {cards.map((c, index) => (
+          <Card key={`${c.id}-${index}`} image={c} onClick={handleCardClick} />
         ))}
       </div>
     </section>

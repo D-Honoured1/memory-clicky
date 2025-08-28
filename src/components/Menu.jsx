@@ -54,7 +54,7 @@ export default function Menu({ isOpen, onClose, onRestart, theme, setTheme, stag
   }
 
   const getStageInfo = (stageNum) => {
-    const cardCounts = { 1: 10, 2: 20, 3: 30 }
+    const cardCounts = { 1: 5, 2: 10, 3: 15 }
     const timeInfo = { 1: "No timer", 2: "7s timer", 3: "5s timer + shuffle" }
     return `${cardCounts[stageNum]} cards - ${timeInfo[stageNum]}`
   }
@@ -76,7 +76,7 @@ export default function Menu({ isOpen, onClose, onRestart, theme, setTheme, stag
               <span className="status-label">Difficulty:</span>
               <span className="status-value">
                 {stage === 1 ? "Easy" : stage === 2 ? "Medium" : "Hard"} (
-                {stage === 1 ? "10" : stage === 2 ? "20" : "30"} cards)
+                {stage === 1 ? "5" : stage === 2 ? "10" : "15"} cards)
               </span>
             </div>
             <div className="status-item">
@@ -99,26 +99,26 @@ export default function Menu({ isOpen, onClose, onRestart, theme, setTheme, stag
             <button
               className={`btn ${stage === 1 ? "primary" : "secondary"} stage-btn`}
               onClick={() => handleStageSelect(1)}
-              aria-label="Easy: 10 cards, no time limit"
+              aria-label="Easy: 5 cards, no time limit"
               title={getStageInfo(1)}
             >
-              Easy (10)
+              Easy (5)
             </button>
             <button
               className={`btn ${stage === 2 ? "primary" : "secondary"} stage-btn`}
               onClick={() => handleStageSelect(2)}
-              aria-label="Medium: 20 cards, 7 second time limit"
+              aria-label="Medium: 10 cards, 7 second time limit"
               title={getStageInfo(2)}
             >
-              Medium (20)
+              Medium (10)
             </button>
             <button
               className={`btn ${stage === 3 ? "primary" : "secondary"} stage-btn`}
               onClick={() => handleStageSelect(3)}
-              aria-label="Hard: 30 cards, 5 second time limit with auto-shuffle"
+              aria-label="Hard: 15 cards, 5 second time limit with auto-shuffle"
               title={getStageInfo(3)}
             >
-              Hard (30)
+              Hard (15)
             </button>
           </div>
         </div>

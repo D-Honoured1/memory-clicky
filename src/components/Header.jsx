@@ -19,7 +19,7 @@ export default function Header({ theme, setTheme, onRestart, stage, setStage, ge
           <div style={{ display: "grid" }}>
             <div style={{ fontSize: 18, fontWeight: 700 }}>Memory Clicky</div>
             <div className="small-muted" style={{ marginTop: 2 }}>
-              Click each card only once to score points. Avoid repeats or you lose!
+              Click each card only once to score points. Click a card twice and you lose!
             </div>
           </div>
         </div>

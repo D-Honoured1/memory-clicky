@@ -24,19 +24,32 @@ const GENRE_SEARCH_TERMS = {
  *
  * @param {number} count - Number of images to fetch
  * @param {string} genre - Genre/category for image search
+ * @param {boolean} shouldFetch - Whether to fetch images (only when game is started)
  * @returns {object} { images, loading, error, refetch }
  */
-export default function useFetchImages(count = 6, genre = "nature") {
+export default function useFetchImages(count = 6, genre = "nature", shouldFetch = false) {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   // Fetch images from Unsplash
   const fetchImages = async () => {
-    const apiKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY // must exist in .env
+    if (!shouldFetch) {
+      return
+    }
+
+    const apiKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY
 
     if (!apiKey) {
-      setError("Unsplash API key not configured. Please add VITE_UNSPLASH_ACCESS_KEY to your .env file.")
+      console.warn("Unsplash API key not configured. Using placeholder images.")
+      const fallbackImages = Array.from({ length: count }, (_, index) => ({
+        id: `placeholder-${index}`,
+        url: `/placeholder.svg?height=300&width=300&query=${genre || "random"}-${index}`,
+        alt: `${genre || "random"} placeholder ${index + 1}`,
+      }))
+      setImages(fallbackImages)
+      setLoading(false)
+      setError(null)
       return
     }
 
@@ -44,7 +57,7 @@ export default function useFetchImages(count = 6, genre = "nature") {
     setError(null)
 
     try {
-      const searchQuery = GENRE_SEARCH_TERMS[genre] || genre
+      const searchQuery = genre ? GENRE_SEARCH_TERMS[genre] || genre : "random"
       const response = await fetch(
         `${UNSPLASH_API_URL}?count=${count}&w=300&h=300&fit=crop&query=${encodeURIComponent(searchQuery)}`,
         {
@@ -62,10 +75,11 @@ export default function useFetchImages(count = 6, genre = "nature") {
 
       // Normalize image data
       const processedImages = data.map((img, index) => ({
-        id: img.id || `fallback-${index}`,
+        id: `${img.id || "fallback"}-${index}`, // ✅ ensure uniqueness
         url: img.urls?.small || `/placeholder.svg?height=300&width=300&query=${genre}-${index}`,
         alt: img.alt_description || `${genre} image ${index + 1}`,
       }))
+
 
       setImages(processedImages)
     } catch (err) {
@@ -74,8 +88,8 @@ export default function useFetchImages(count = 6, genre = "nature") {
 
       const fallbackImages = Array.from({ length: count }, (_, index) => ({
         id: `fallback-${index}`,
-        url: `/placeholder.svg?height=300&width=300&query=${genre}-${index}`,
-        alt: `${genre} placeholder ${index + 1}`,
+        url: `/placeholder.svg?height=300&width=300&query=${genre || "random"}-${index}`,
+        alt: `${genre || "random"} placeholder ${index + 1}`,
       }))
       setImages(fallbackImages)
     } finally {
@@ -84,8 +98,10 @@ export default function useFetchImages(count = 6, genre = "nature") {
   }
 
   useEffect(() => {
-    fetchImages()
-  }, [count, genre])
+    if (shouldFetch) {
+      fetchImages()
+    }
+  }, [count, genre, shouldFetch])
 
   return { images, loading, error, refetch: fetchImages }
 }
